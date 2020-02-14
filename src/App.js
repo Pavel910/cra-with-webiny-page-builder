@@ -1,26 +1,27 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { registerPlugins, getPlugins } from "@webiny/plugins";
+import { PageBuilderProvider } from "@webiny/app-page-builder/contexts/PageBuilder";
+import { GenericErrorPage, GenericNotFoundPage } from "./webiny/pageBuilder";
+import plugins from "./webiny/plugins";
+import "./App.scss";
 
-function App() {
+registerPlugins(plugins);
+
+const defaults = {
+  pages: {
+    notFound: GenericNotFoundPage,
+    error: GenericErrorPage
+  }
+};
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <PageBuilderProvider defaults={defaults}>
+      {getPlugins("route").map(pl =>
+        React.cloneElement(pl.route, { key: pl.name, exact: true })
+      )}
+    </PageBuilderProvider>
   );
-}
+};
 
 export default App;
